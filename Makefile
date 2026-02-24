@@ -1,10 +1,18 @@
 
-.PHONY: start
-start:
+.PHONY: dev
+dev:
+	pnpm run dev
+
+.PHONY: supabase.start
+supabase.start:
 	pnpm exec supabase start
 
-.PHONY: stop
-stop:
+.PHONY: supabase.status
+supabase.status:
+	pnpm exec supabase status
+
+.PHONY: supabase.stop
+supabase.stop:
 	pnpm exec supabase stop
 
 # 型定義を生成(ローカルDBのスキーマからTypescriptの型定義を生成する)
