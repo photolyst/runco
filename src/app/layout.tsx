@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "タイム計測",
-  description: "タイム計測アプリ",
+  title: "runco",
+  description: "走る仲間が、ここにいる。",
 };
 
 export default function RootLayout({
