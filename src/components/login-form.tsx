@@ -1,10 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 
 export function LoginForm({
   className,
@@ -52,7 +51,11 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-4xl">
+            <div className="font-semibold text-primary font-[family-name:var(--font-fredoka)]">
+              Login
+            </div>
+          </CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
@@ -65,7 +68,7 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="email@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
