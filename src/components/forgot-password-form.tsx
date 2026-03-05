@@ -1,9 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +12,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 
 export function ForgotPasswordForm({
   className,
@@ -50,7 +49,11 @@ export function ForgotPasswordForm({
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
+            <CardTitle className="text-2xl">
+              <div className="font-semibold text-primary font-[family-name:var(--font-fredoka)]">
+                Check Your Email
+              </div>
+            </CardTitle>
             <CardDescription>Password reset instructions sent</CardDescription>
           </CardHeader>
           <CardContent>
@@ -63,7 +66,11 @@ export function ForgotPasswordForm({
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+            <CardTitle className="text-2xl">
+              <div className="font-semibold text-primary font-[family-name:var(--font-fredoka)]">
+                Reset Your Password
+              </div>
+            </CardTitle>
             <CardDescription>
               Type in your email and we&apos;ll send you a link to reset your
               password
@@ -77,7 +84,7 @@ export function ForgotPasswordForm({
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="email@example.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

@@ -60,7 +60,11 @@ export function SignUpForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
+          <CardTitle className="text-4xl">
+            <div className="font-semibold text-primary font-[family-name:var(--font-fredoka)]">
+              Sign up
+            </div>
+          </CardTitle>
           <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,7 +75,7 @@ export function SignUpForm({
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="email@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
