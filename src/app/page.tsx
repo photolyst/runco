@@ -1,12 +1,12 @@
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#fdfaf6] selection:bg-[#f7995a] selection:text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center">
       {/* Hero Section with Background Image */}
-      <main className="relative flex flex-col items-center justify-center p-8 w-full  tracking-wide gap-8 overflow-hidden ">
+      <main className="relative flex flex-col items-center justify-center p-8 w-full tracking-wide gap-8 overflow-hidden">
         {/* Content - needs z-10 to sit above the background */}
         <div className="z-10 flex flex-col items-center gap-8 text-center">
           {/* CSS-only Logo */}
-          <h1 className="text-7xl md:text-9xl font-semibold bg-gradient-to-r from-[#f77054] via-[#f89c5b] to-[#41b2bd] bg-clip-text text-transparent items-baseline hover:scale-105 transition-transform duration-500 ease-out select-none cursor-default font-[family-name:var(--font-fredoka)]">
+          <h1 className="text-7xl md:text-9xl font-semibold bg-gradient-to-r from-primary via-[#f89c5b] to-[#41b2bd] bg-clip-text text-transparent items-baseline hover:scale-105 transition-transform duration-500 ease-out select-none cursor-default font-[family-name:var(--font-fredoka)]">
             runco.
           </h1>
 
