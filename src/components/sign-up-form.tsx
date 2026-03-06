@@ -128,7 +128,7 @@ export function SignUpForm({
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button
                   variant="outline"
-                  ype="submit"
+                  type="submit"
                   className="w-full border-2 border-primary"
                   disabled={isLoading}
                 >
