@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Logo } from "@/components/logo";
+import { RuncoLogo } from "@/components/runco-logo";
 
 export default function Home() {
   return (
@@ -8,7 +8,7 @@ export default function Home() {
       <main className="relative flex flex-col items-center justify-center p-8 w-full tracking-wide gap-8 overflow-hidden">
         {/* Content - needs z-10 to sit above the background */}
         <div className="z-10 flex flex-col items-center gap-8 text-center">
-          <Logo className="text-7xl md:text-9xl" />
+          <RuncoLogo className="text-7xl md:text-9xl" />
 
           <div className="space-y-4">
             <p className="text-2xl md:text-3xl font-medium tracking-widest text-gray-600 drop-shadow-md">
