@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export function Logo({
+export function RuncoLogo({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
@@ -17,4 +17,4 @@ export function Logo({
     </div>
   );
 }
-export default Logo;
+export default RuncoLogo;

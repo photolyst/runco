@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SocialLoginButton } from "@/components/social-login-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
@@ -51,6 +57,7 @@ export function LoginForm({
               Login
             </div>
           </CardTitle>
+          <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-4">
