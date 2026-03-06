@@ -41,6 +41,23 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
 
   if (
+    user &&
+    request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/auth/oauth") &&
+    !request.nextUrl.pathname.startsWith("/auth/confirm") &&
+    !request.nextUrl.pathname.startsWith("/auth/error")
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/protected";
+    const redirectResponse = NextResponse.redirect(url);
+    // Remember to copy cookies to the new response
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+    return redirectResponse;
+  }
+
+  if (
     !user &&
     request.nextUrl.pathname !== "/" && // ✅ トップページを許可
     !request.nextUrl.pathname.startsWith("/login") &&
@@ -49,7 +66,12 @@ export async function updateSession(request: NextRequest) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+    const redirectResponse = NextResponse.redirect(url);
+    // Remember to copy cookies to the new response
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+    return redirectResponse;
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
