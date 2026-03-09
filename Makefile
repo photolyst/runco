@@ -31,3 +31,8 @@ supabase.db.reset:
 # .PHONY: gen
 # gen:
 # 	pnpm exec supabase gen types typescript --local > src/types/supabase.ts
+
+# Apple OAuth Secretをローテーションする
+.PHONY: rotate-apple-secret
+rotate-apple-secret:
+	pnpm dlx env-cmd -f .env.local node scripts/rotate-apple-secret.js
