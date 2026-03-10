@@ -27,11 +27,8 @@ export function UpdatePasswordForm({
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData();
-    formData.append("password", password);
-
     try {
-      const result = await updatePasswordAction(formData);
+      const result = await updatePasswordAction({ password });
       if (result?.error) {
         setError(result.error);
       }

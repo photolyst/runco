@@ -30,12 +30,8 @@ export function LoginForm({
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-
     try {
-      const result = await loginAction(formData);
+      const result = await loginAction({ email, password });
       if (result?.error) {
         setError(result.error);
       }

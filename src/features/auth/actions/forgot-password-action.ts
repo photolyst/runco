@@ -1,14 +1,22 @@
 "use server";
 
 import { headers } from "next/headers";
+import {
+  type ForgotPasswordDTO,
+  forgotPasswordSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
 
-export async function forgotPasswordAction(formData: FormData) {
-  const email = formData.get("email") as string;
+export async function forgotPasswordAction(data: ForgotPasswordDTO) {
+  const validated = forgotPasswordSchema.safeParse(data);
 
-  if (!email) {
-    return { error: "Email is required" };
+  if (!validated.success) {
+    return {
+      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+    };
   }
+
+  const { email } = validated.data;
 
   const supabase = await createClient();
   const origin = (await headers()).get("origin");

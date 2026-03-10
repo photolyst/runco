@@ -1,14 +1,22 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import {
+  type UpdatePasswordDTO,
+  updatePasswordSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
 
-export async function updatePasswordAction(formData: FormData) {
-  const password = formData.get("password") as string;
+export async function updatePasswordAction(data: UpdatePasswordDTO) {
+  const validated = updatePasswordSchema.safeParse(data);
 
-  if (!password) {
-    return { error: "Password is required" };
+  if (!validated.success) {
+    return {
+      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+    };
   }
+
+  const { password } = validated.data;
 
   const supabase = await createClient();
 

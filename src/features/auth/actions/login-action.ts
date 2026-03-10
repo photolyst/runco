@@ -1,15 +1,22 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import {
+  type LoginDTO,
+  loginSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
 
-export async function loginAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+export async function loginAction(data: LoginDTO) {
+  const validated = loginSchema.safeParse(data);
 
-  if (!email || !password) {
-    return { error: "Email and password are required" };
+  if (!validated.success) {
+    return {
+      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+    };
   }
+
+  const { email, password } = validated.data;
 
   const supabase = await createClient();
 

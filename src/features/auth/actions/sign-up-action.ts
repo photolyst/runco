@@ -2,20 +2,22 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  type SignUpDTO,
+  signUpSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
 
-export async function signUpAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const repeatPassword = formData.get("repeatPassword") as string;
+export async function signUpAction(data: SignUpDTO) {
+  const validated = signUpSchema.safeParse(data);
 
-  if (!email || !password) {
-    return { error: "Email and password are required" };
+  if (!validated.success) {
+    return {
+      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+    };
   }
 
-  if (password !== repeatPassword) {
-    return { error: "Passwords do not match" };
-  }
+  const { email, password } = validated.data;
 
   const supabase = await createClient();
   const origin = (await headers()).get("origin");

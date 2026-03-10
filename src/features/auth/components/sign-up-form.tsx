@@ -37,13 +37,12 @@ export function SignUpForm({
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("repeatPassword", repeatPassword);
-
     try {
-      const result = await signUpAction(formData);
+      const result = await signUpAction({
+        email,
+        password,
+        repeatPassword,
+      });
       if (result?.error) {
         setError(result.error);
       }

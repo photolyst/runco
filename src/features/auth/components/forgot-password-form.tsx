@@ -29,11 +29,8 @@ export function ForgotPasswordForm({
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData();
-    formData.append("email", email);
-
     try {
-      const result = await forgotPasswordAction(formData);
+      const result = await forgotPasswordAction({ email });
       if (result.error) {
         setError(result.error);
       } else {
