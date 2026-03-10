@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AppleLogo } from "@/components/apple-logo";
 import { GoogleLogo } from "@/components/google-logo";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
+import { socialLoginAction } from "@/features/auth/actions/social-login-action";
 
 interface SocialLoginButtonProps {
   provider: "apple" | "google";
@@ -16,19 +16,15 @@ export function SocialLoginButton({ provider }: SocialLoginButtonProps) {
 
   const handleSocialLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/oauth?next=/protected`,
-        },
-      });
-
-      if (error) throw error;
+      const result = await socialLoginAction(provider);
+      if (result?.error) {
+        setError(result.error);
+        setIsLoading(false);
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
       setIsLoading(false);
