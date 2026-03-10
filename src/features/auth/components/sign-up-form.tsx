@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SocialLoginButton } from "@/components/social-login-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SocialLoginButton } from "@/features/auth/components/social-login-button";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
