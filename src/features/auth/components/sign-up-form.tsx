@@ -1,7 +1,9 @@
 "use client";
 
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,42 +16,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUpAction } from "@/features/auth/actions/sign-up-action";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
+import {
+  type SignUpDTO,
+  signUpSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { cn } from "@/lib/utils";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpDTO>({
+    resolver: standardSchemaResolver(signUpSchema),
+  });
 
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const result = await signUpAction({
-        email,
-        password,
-        repeatPassword,
-      });
-      if (result?.error) {
-        setError(result.error);
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (data: SignUpDTO) => {
+    setServerError(null);
+    const result = await signUpAction(data);
+    if (!result.success) {
+      setServerError(result.error);
     }
   };
 
@@ -84,7 +75,7 @@ export function SignUpForm({
           </div>
 
           <div>
-            <form onSubmit={handleSignUp}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -92,10 +83,13 @@ export function SignUpForm({
                     id="email"
                     type="email"
                     placeholder="email@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -104,10 +98,13 @@ export function SignUpForm({
                   <Input
                     id="password"
                     type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                   />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -116,19 +113,24 @@ export function SignUpForm({
                   <Input
                     id="repeat-password"
                     type="password"
-                    required
-                    value={repeatPassword}
-                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    {...register("repeatPassword")}
                   />
+                  {errors.repeatPassword && (
+                    <p className="text-sm text-red-500">
+                      {errors.repeatPassword.message}
+                    </p>
+                  )}
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {serverError && (
+                  <p className="text-sm text-red-500">{serverError}</p>
+                )}
                 <Button
                   variant="outline"
                   type="submit"
                   className="w-full border-2 border-primary"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Creating an account..." : "Sign up"}
+                  {isSubmitting ? "Creating an account..." : "Sign up"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">

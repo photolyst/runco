@@ -1,7 +1,9 @@
 "use client";
 
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,31 +16,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginAction } from "@/features/auth/actions/login-action";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
+import {
+  type LoginDTO,
+  loginSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { cn } from "@/lib/utils";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginDTO>({
+    resolver: standardSchemaResolver(loginSchema),
+  });
 
-    try {
-      const result = await loginAction({ email, password });
-      if (result?.error) {
-        setError(result.error);
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (data: LoginDTO) => {
+    setServerError(null);
+    const result = await loginAction(data);
+    if (!result.success) {
+      setServerError(result.error);
     }
   };
 
@@ -73,7 +75,7 @@ export function LoginForm({
           </div>
 
           <div>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -81,10 +83,13 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="email@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -99,19 +104,24 @@ export function LoginForm({
                   <Input
                     id="password"
                     type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                   />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {serverError && (
+                  <p className="text-sm text-red-500">{serverError}</p>
+                )}
                 <Button
                   variant="outline"
                   type="submit"
                   className="w-full border-2 border-primary"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">

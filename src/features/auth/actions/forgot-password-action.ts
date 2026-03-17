@@ -6,13 +6,18 @@ import {
   forgotPasswordSchema,
 } from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
+import type { ActionResult } from "@/types/action-result";
 
-export async function forgotPasswordAction(data: ForgotPasswordDTO) {
+export async function forgotPasswordAction(
+  data: ForgotPasswordDTO,
+): Promise<ActionResult> {
   const validated = forgotPasswordSchema.safeParse(data);
 
   if (!validated.success) {
     return {
-      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+      success: false,
+      error: "入力内容に誤りがあります",
+      fieldErrors: validated.error.flatten().fieldErrors,
     };
   }
 
@@ -26,7 +31,7 @@ export async function forgotPasswordAction(data: ForgotPasswordDTO) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { success: false, error: error.message };
   }
 
   return { success: true };

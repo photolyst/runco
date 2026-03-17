@@ -4,8 +4,11 @@ import type { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import type { ActionResult } from "@/types/action-result";
 
-export async function socialLoginAction(provider: Provider) {
+export async function socialLoginAction(
+  provider: Provider,
+): Promise<ActionResult> {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -17,12 +20,12 @@ export async function socialLoginAction(provider: Provider) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { success: false, error: error.message };
   }
 
   if (data?.url) {
     redirect(data.url);
   }
 
-  return { error: "Could not generate redirect URL" };
+  return { success: false, error: "Could not generate redirect URL" };
 }

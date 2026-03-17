@@ -19,14 +19,9 @@ export function SocialLoginButton({ provider }: SocialLoginButtonProps) {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const result = await socialLoginAction(provider);
-      if (result?.error) {
-        setError(result.error);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+    const result = await socialLoginAction(provider);
+    if (!result.success) {
+      setError(result.error);
       setIsLoading(false);
     }
   };

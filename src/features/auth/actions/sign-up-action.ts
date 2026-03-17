@@ -7,13 +7,16 @@ import {
   signUpSchema,
 } from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/lib/supabase/server";
+import type { ActionResult } from "@/types/action-result";
 
-export async function signUpAction(data: SignUpDTO) {
+export async function signUpAction(data: SignUpDTO): Promise<ActionResult> {
   const validated = signUpSchema.safeParse(data);
 
   if (!validated.success) {
     return {
-      error: validated.error.issues[0]?.message || "入力内容に誤りがあります",
+      success: false,
+      error: "入力内容に誤りがあります",
+      fieldErrors: validated.error.flatten().fieldErrors,
     };
   }
 
@@ -31,7 +34,7 @@ export async function signUpAction(data: SignUpDTO) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { success: false, error: error.message };
   }
 
   redirect("/auth/sign-up-success");
