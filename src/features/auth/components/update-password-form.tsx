@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorMessage } from "@hookform/error-message";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FormErrorMessage } from "@/components/ui/form-error-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updatePasswordAction } from "@/features/auth/actions/update-password-action";
@@ -66,15 +68,15 @@ export function UpdatePasswordForm({
                   placeholder="New password"
                   {...register("password")}
                 />
-                {errors.password && (
-                  <p className="text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
+                <ErrorMessage
+                  errors={errors}
+                  name="password"
+                  render={({ message }) => (
+                    <FormErrorMessage message={message} />
+                  )}
+                />
               </div>
-              {serverError && (
-                <p className="text-sm text-red-500">{serverError}</p>
-              )}
+              {serverError && <FormErrorMessage message={serverError} />}
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Save new password"}
               </Button>

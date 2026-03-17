@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorMessage } from "@hookform/error-message";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FormErrorMessage } from "@/components/ui/form-error-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { forgotPasswordAction } from "@/features/auth/actions/forgot-password-action";
@@ -89,15 +91,15 @@ export function ForgotPasswordForm({
                     placeholder="email@example.com"
                     {...register("email")}
                   />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )}
+                  <ErrorMessage
+                    errors={errors}
+                    name="email"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
+                  />
                 </div>
-                {serverError && (
-                  <p className="text-sm text-red-500">{serverError}</p>
-                )}
+                {serverError && <FormErrorMessage message={serverError} />}
                 <Button
                   type="submit"
                   className="w-full"

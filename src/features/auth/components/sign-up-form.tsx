@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorMessage } from "@hookform/error-message";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FormErrorMessage } from "@/components/ui/form-error-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUpAction } from "@/features/auth/actions/sign-up-action";
@@ -85,11 +87,13 @@ export function SignUpForm({
                     placeholder="email@example.com"
                     {...register("email")}
                   />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )}
+                  <ErrorMessage
+                    errors={errors}
+                    name="email"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -100,11 +104,13 @@ export function SignUpForm({
                     type="password"
                     {...register("password")}
                   />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
-                  )}
+                  <ErrorMessage
+                    errors={errors}
+                    name="password"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -115,15 +121,15 @@ export function SignUpForm({
                     type="password"
                     {...register("repeatPassword")}
                   />
-                  {errors.repeatPassword && (
-                    <p className="text-sm text-red-500">
-                      {errors.repeatPassword.message}
-                    </p>
-                  )}
+                  <ErrorMessage
+                    errors={errors}
+                    name="repeatPassword"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
+                  />
                 </div>
-                {serverError && (
-                  <p className="text-sm text-red-500">{serverError}</p>
-                )}
+                {serverError && <FormErrorMessage message={serverError} />}
                 <Button
                   variant="outline"
                   type="submit"
