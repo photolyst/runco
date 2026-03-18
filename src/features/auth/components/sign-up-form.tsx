@@ -1,9 +1,10 @@
 "use client";
 
+import { ErrorMessage } from "@hookform/error-message";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SocialLoginButton } from "@/components/social-login-button";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,48 +13,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FormErrorMessage } from "@/components/ui/form-error-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { signUpAction } from "@/features/auth/actions/sign-up-action";
+import { SocialLoginButton } from "@/features/auth/components/social-login-button";
+import {
+  type SignUpDTO,
+  signUpSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { cn } from "@/lib/utils";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpDTO>({
+    resolver: standardSchemaResolver(signUpSchema),
+  });
 
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
-        },
-      });
-      if (error) throw error;
-      router.push("/auth/sign-up-success");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (data: SignUpDTO) => {
+    setServerError(null);
+    const result = await signUpAction(data);
+    if (!result.success) {
+      setServerError(result.error);
     }
   };
 
@@ -88,7 +77,7 @@ export function SignUpForm({
           </div>
 
           <div>
-            <form onSubmit={handleSignUp}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -96,9 +85,14 @@ export function SignUpForm({
                     id="email"
                     type="email"
                     placeholder="email@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="email"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -108,9 +102,14 @@ export function SignUpForm({
                   <Input
                     id="password"
                     type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="password"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -120,19 +119,24 @@ export function SignUpForm({
                   <Input
                     id="repeat-password"
                     type="password"
-                    required
-                    value={repeatPassword}
-                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    {...register("repeatPassword")}
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="repeatPassword"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {serverError && <FormErrorMessage message={serverError} />}
                 <Button
                   variant="outline"
                   type="submit"
                   className="w-full border-2 border-primary"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Creating an account..." : "Sign up"}
+                  {isSubmitting ? "Creating an account..." : "Sign up"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">

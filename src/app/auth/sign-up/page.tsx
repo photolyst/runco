@@ -1,5 +1,5 @@
 import { RuncoLogo } from "@/components/runco-logo";
-import { SignUpForm } from "@/components/sign-up-form";
+import { SignUpForm } from "@/features/auth/components/sign-up-form";
 
 export default function Page() {
   return (

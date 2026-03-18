@@ -1,9 +1,10 @@
 "use client";
 
+import { ErrorMessage } from "@hookform/error-message";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SocialLoginButton } from "@/components/social-login-button";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,39 +13,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FormErrorMessage } from "@/components/ui/form-error-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { loginAction } from "@/features/auth/actions/login-action";
+import { SocialLoginButton } from "@/features/auth/components/social-login-button";
+import {
+  type LoginDTO,
+  loginSchema,
+} from "@/features/auth/schemas/auth-schemas";
 import { cn } from "@/lib/utils";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginDTO>({
+    resolver: standardSchemaResolver(loginSchema),
+  });
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (data: LoginDTO) => {
+    setServerError(null);
+    const result = await loginAction(data);
+    if (!result.success) {
+      setServerError(result.error);
     }
   };
 
@@ -79,7 +77,7 @@ export function LoginForm({
           </div>
 
           <div>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -87,9 +85,14 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="email@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="email"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -105,19 +108,24 @@ export function LoginForm({
                   <Input
                     id="password"
                     type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="password"
+                    render={({ message }) => (
+                      <FormErrorMessage message={message} />
+                    )}
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {serverError && <FormErrorMessage message={serverError} />}
                 <Button
                   variant="outline"
                   type="submit"
                   className="w-full border-2 border-primary"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
