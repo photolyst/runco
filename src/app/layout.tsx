@@ -18,8 +18,11 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "runco",
+  title: "runco.",
   description: "走る仲間が、ここにいる。",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
