@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 // for env validation
-import "@/env/client";
-import "@/env/server";
+import "./src/env/client";
+import "./src/env/server";
 
 const nextConfig: NextConfig = {
   /* config options here */
