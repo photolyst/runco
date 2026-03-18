@@ -1,7 +1,7 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { env } from "@/env/client";
 import {
   type SignUpDTO,
   signUpSchema,
@@ -23,7 +23,7 @@ export async function signUpAction(data: SignUpDTO): Promise<ActionResult> {
   const { email, password } = validated.data;
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  const origin = env.NEXT_PUBLIC_SITE_URL;
 
   const { error } = await supabase.auth.signUp({
     email,
