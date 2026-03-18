@@ -1,6 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
+import { env } from "@/env/client";
 import {
   type ForgotPasswordDTO,
   forgotPasswordSchema,
@@ -24,7 +24,7 @@ export async function forgotPasswordAction(
   const { email } = validated.data;
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  const origin = env.NEXT_PUBLIC_SITE_URL;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/update-password`,
